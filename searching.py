@@ -67,6 +67,18 @@ def measure_time(func, data, target, repeats=5):
 
     return total_time / repeats
 
+def pattern_search(sequence, pattern):
+    positions = set()
+    m = len(pattern)
+    n = len(sequence)
+
+    for i in range(n - m + 1):
+
+        if sequence[i:i + m] == pattern:
+            positions.add(i)
+
+    return positions
+
 
 
 def main():
@@ -114,6 +126,13 @@ def main():
 
     plt.savefig("graf.png")
     plt.show()
+
+    dna_sequence = read_data("sequential.json", "dna_sequence")
+    pattern = "ATA"
+    result = pattern_search(dna_sequence, pattern)
+    print("DNA sekvence:", dna_sequence)
+    print("Vzor:", pattern)
+    print("Pozice výskytu:", result)
 
 
 
