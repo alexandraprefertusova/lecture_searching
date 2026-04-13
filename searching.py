@@ -1,16 +1,23 @@
-from pathlib import Path
 import json
+import random
+import time
+import matplotlib.pyplot as plt
+
 
 
 def read_data(filename, field):
     try:
         with open(filename, "r", encoding="utf-8") as f:
             data = json.load(f)
+
         if field not in data:
             return None
+
         return data[field]
+
     except (FileNotFoundError, json.JSONDecodeError):
         return None
+
 
 
 def linear_search(sequence, target):
@@ -24,6 +31,7 @@ def linear_search(sequence, target):
         "positions": positions,
         "count": len(positions)
     }
+
 
 def binary_search(sequence, target):
     left = 0
@@ -41,16 +49,72 @@ def binary_search(sequence, target):
 
     return None
 
+
+def generate_data(size):
+    data = [random.randint(0, size) for _ in range(size)]
+    return data, sorted(data)
+
+
+
+def measure_time(func, data, target, repeats=5):
+    total_time = 0
+
+    for _ in range(repeats):
+        start = time.perf_counter()
+        func(data, target)
+        end = time.perf_counter()
+        total_time += (end - start)
+
+    return total_time / repeats
+
+
+
 def main():
+
+    sequential_data = read_data("sequential.json", "unordered_numbers")
     ordered_data = read_data("sequential.json", "ordered_numbers")
 
     target = 5
 
-    index = binary_search(ordered_data, target)
+    print("=== TEST FUNKCÍ ===")
+    print("Data:", sequential_data)
 
-    print("Seřazená data:", ordered_data)
-    print("Hledané číslo:", target)
-    print("Výsledek (index):", index)
+    linear_result = linear_search(sequential_data, target)
+    print("Linear search:", linear_result)
+
+    binary_result = binary_search(ordered_data, target)
+    print("Binary search index:", binary_result)
+
+
+    sizes = [100, 500, 1000, 2000]
+
+    linear_times = []
+    binary_times = []
+    set_times = []
+
+    for size in sizes:
+        data, ordered = generate_data(size)
+        target = data[-1]
+
+        data_set = set(data)
+
+        linear_times.append(measure_time(linear_search, data, target))
+        binary_times.append(measure_time(binary_search, ordered, target))
+        set_times.append(measure_time(lambda s, t: t in s, data_set, target))
+
+    plt.plot(sizes, linear_times, label="Linear search")
+    plt.plot(sizes, binary_times, label="Binary search")
+    plt.plot(sizes, set_times, label="Set membership")
+
+    plt.xlabel("Velikost vstupu")
+    plt.ylabel("Čas (s)")
+    plt.title("Porovnání vyhledávacích algoritmů")
+    plt.legend()
+    plt.grid()
+
+    plt.savefig("graf.png")
+    plt.show()
+
 
 
 if __name__ == "__main__":
