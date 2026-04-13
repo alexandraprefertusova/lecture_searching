@@ -25,17 +25,32 @@ def linear_search(sequence, target):
         "count": len(positions)
     }
 
+def binary_search(sequence, target):
+    left = 0
+    right = len(sequence) - 1
+
+    while left <= right:
+        mid = (left + right) // 2
+
+        if sequence[mid] == target:
+            return mid
+        elif sequence[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+
+    return None
+
 def main():
-    sequential_data = read_data("sequential.json", "unordered_numbers")
+    ordered_data = read_data("sequential.json", "ordered_numbers")
 
     target = 5
 
-    result = linear_search(sequential_data, target)
+    index = binary_search(ordered_data, target)
 
-    print("Data:", sequential_data)
-    print("Hladane cislo:", target)
-    print("Pozicia:", result["positions"])
-    print("Pocet vyskytov:", result["count"])
+    print("Seřazená data:", ordered_data)
+    print("Hledané číslo:", target)
+    print("Výsledek (index):", index)
 
 
 if __name__ == "__main__":
