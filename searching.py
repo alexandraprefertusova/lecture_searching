@@ -69,13 +69,23 @@ def measure_time(func, data, target, repeats=5):
 
 def pattern_search(sequence, pattern):
     positions = set()
-    m = len(pattern)
+
     n = len(sequence)
+    m = len(pattern)
 
-    for i in range(n - m + 1):
+    i = 0
+    while i <= n - m:
+        match = True
 
-        if sequence[i:i + m] == pattern:
+        for j in range(m):
+            if sequence[i + j] != pattern[j]:
+                match = False
+                break
+
+        if match:
             positions.add(i)
+
+        i += 1
 
     return positions
 
